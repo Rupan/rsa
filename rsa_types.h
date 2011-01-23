@@ -16,11 +16,4 @@ typedef struct _rsa_t {
   uint32_t nBitLen;
 } rsa_t;
 
-typedef struct _msg_t {
-  uint8_t *M;
-  uint32_t mLen;
-  uint8_t *L;
-  uint32_t lLen;
-} msg_t;
-
 #endif

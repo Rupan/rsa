@@ -2,7 +2,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <math.h>
 #include <arpa/inet.h>
 
 #include <sys/types.h>
