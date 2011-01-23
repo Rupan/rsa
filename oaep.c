@@ -116,7 +116,7 @@ int32_t oaep_encode(uint8_t *M, uint32_t mLen, uint32_t k, lbl_t label, uint8_t 
 }
 
 int32_t oaep_decode(uint8_t *EM, uint32_t k, lbl_t label) {
-  int32_t i, dbLen;
+  int32_t i, dbLen, fail, pass;
   uint8_t *mask, *DB, *seed;
   const uint8_t *lHash;
 
@@ -139,20 +139,30 @@ int32_t oaep_decode(uint8_t *EM, uint32_t k, lbl_t label) {
   free(mask);
 
   /* FIXME: this is probably vulnerable to linearization */
-  if(EM[0]) return -5;
+  fail = pass = 0;
+  if(EM[0])
+    fail++;
+  else
+    pass++;
   if(label == LABEL_CLIENT)
     lHash = hash_client;
   else
     lHash = hash_server;
-  if(!is_same(lHash, DB, hLen)) {
-    return -5;
-  }
+  if(!is_same(lHash, DB, hLen))
+    fail++;
+  else
+    pass++;
   for(i=hLen; i<dbLen && DB[i] == 0x00; i++);
-  if(i == dbLen || DB[i] != 0x01) {
-    return -5;
-  }
+  if(i == dbLen || DB[i] != 0x01)
+    fail++;
+  else
+    pass++;
 
-  return dbLen - i - 1;
+  pass = dbLen - i - 1;
+  if(fail)
+    return -5;
+  else
+    return pass;
 }
 
 #if defined(TEST)
