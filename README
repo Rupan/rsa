@@ -1,0 +1,15 @@
+This repository contains code which implements several crypto operations:
+
+ * perform EME-OAEP encoding, as specified in PKCS#1 version 2.1, using the Tiger hash
+ * perform RSA encryption, decryption, and signing operations using the GMP library [TODO]
+
+To test the oaep code, do this:
+
+ $ gcc -O0 -ggdb -Wall -W -DTEST tiger.o sboxes.o oaep.c -o oaep && ./oaep SomeRandomString
+
+Notes:
+
+To use the OAEP interface, see documentation in oaep.h.
+The Tiger code provided herein is largely unmodified from the reference implementation:
+
+ http://www.cs.technion.ac.il/~biham/Reports/Tiger/
