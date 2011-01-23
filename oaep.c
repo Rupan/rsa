@@ -120,7 +120,7 @@ int32_t oaep_decode(uint8_t *EM, uint32_t k, lbl_t label) {
   uint8_t *mask, *DB, *seed;
   const uint8_t *lHash;
 
-  if(k < (2*hLen+2))
+  if((int32_t)k < (int32_t)(2*hLen+2))
     return -5;
 
   dbLen = k - hLen - 1;
@@ -138,7 +138,7 @@ int32_t oaep_decode(uint8_t *EM, uint32_t k, lbl_t label) {
     DB[i] ^= mask[i];
   free(mask);
 
-  /* FIXME: this is probably vulnerable to linearization */
+  /* TODO: is this still vulnerable to linearization? */
   fail = pass = 0;
   if(EM[0])
     fail++;
@@ -152,13 +152,17 @@ int32_t oaep_decode(uint8_t *EM, uint32_t k, lbl_t label) {
     fail++;
   else
     pass++;
-  for(i=hLen; i<dbLen && DB[i] == 0x00; i++);
+  for(i=hLen; i<dbLen; i++) {
+    if(DB[i] != 0x00)
+      break;
+  }
   if(i == dbLen || DB[i] != 0x01)
     fail++;
   else
     pass++;
-
   pass = dbLen - i - 1;
+  while(i++ < dbLen);
+
   if(fail)
     return -5;
   else
